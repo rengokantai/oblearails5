@@ -67,7 +67,7 @@ the yield part will render index.html.erb part, so the rendered hello.html is
 </html>
 ```
 ######Choosing a Layout from a Controller
-by default, hello controller will render hello.html.erb, to change that,
+- by default, hello controller will render hello.html.erb, to change that,
 ```
 class HelloController < ApplicationController
   layout "standard_layout"
@@ -76,4 +76,51 @@ class HelloController < ApplicationController
   end
 end
 ```
-this will render app/views/layouts/standard_layout.html.erb instead of app/views/layouts/hello.html.erb
+this will render app/views/layouts/standard_layout.html.erb instead of app/views/layouts/hello.html.erb  
+
+- using method reference. determined by method
+```
+class HelloController < ApplicationController
+
+  layout :admin_or_user
+
+  def index
+    ...
+  end
+
+  private
+
+  def admin_or_user
+    if admin_authenticated
+      "admin_screen"
+    else
+      "user_screen"
+    end
+  end
+end
+```
+- only render with HTML format
+```
+layout "standard_layout", except: [:rss, :xml, :text_only]
+layout "standard_layout", only: html
+```
+######Sharing Template Data with the Layout
+create and yield named template.in index.html.erb,add
+```
+
+<% content_for(:list) do %>
+  <ol>
+  <% for i in 1..@count %>
+    <li><%= @bonus %></li>
+  <% end %>
+  </ol>
+<% end %>
+```
+in hello.index.erb
+```
+<%= yield :list %>
+```
+######Setting a Default Page
+```
+root to: "hello#index"
+```
