@@ -135,13 +135,77 @@ app/controllers/entries_controller.rb
 ```
 class EntriesController < ApplicationController
   def sign_in
+    @name = params[:visitor_name]
   end
 end
 ```
-app/views/entries/sign_in.html.erb
+app/views/entries/sign_in.html.erb. The param will send to ocontroller
 ```
 <%= form_tag action: 'sign_in' do %>
-   <%= text_field_tag 'visitor_name', @name %></p>
+   <%= text_field_tag 'visitor_name', @name %></p>    //@name = default value
    <%= submit_tag 'Sign in' %>
 <% end %>
+```
+config/routes.rb
+```
+get 'entries/sign_in' => 'entries#sign_in'
+post 'entries/sign_in' => 'entries#sign_in'
+```
+see all routes
+```
+rails routes 
+```
+######Connecting to a Database Through a Model
+```
+rails generate model entry
+```
+generated files, add a column (note the syntax a.type :field), edit at db/migrate/[timestamp]_create_entries.rb
+```
+class CreateEntries < ActiveRecord::Migration
+  def change
+    create_table :entries do |t|
+      t.string :name  #add column
+      t.timestamps
+    end
+  end
+end
+```
+then
+```
+rails db:migrate
+```
+get file at app/models/entry.rb
+######Connecting the Controller to the Model, Storing data using the model
+save data to  model
+```
+class EntriesController < ApplicationController
+  def sign_in
+    @name = params[:visitor_name]
+    unless @name.blank?
+      @entry = Entry.create({:name => @name})
+    end
+    @entries = Entry.all
+  end
+end
+```
+actually the second line is same as
+```
+@entry = Entry.new
+@entry.name = @name
+@entry.save
+```
+######Retrieving data from the model (see previous, @entries=Entry.all)
+rails debug
+```
+<%= debug(params) %>
+```
+######Finding Data with ActiveRecord
+```
+rails c
+Entry.find 1
+Entry.first
+Entry.where(name: "ke")
+Entry.order(:name)
+Entry.limit 3
+Entry.limit(3).offset(2)
 ```
