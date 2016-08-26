@@ -303,3 +303,123 @@ class PeopleController < ApplicationController
     end
 end
 ```
+#####Chapter 6. Presenting Models with Forms
+######Generating HTML Forms with Scaffolding
+form_tag vs form_for.  
+form_tag
+```
+<%= form_tag action: 'sign_in' do %>
+   <%= text_field_tag 'visitor_name', @name %></p>    //@name = default value
+   <%= submit_tag 'Sign in' %>
+<% end %>
+```
+form_for using f to iterate
+```
+ <%= form_for(@person) do |f| %>
+  <% if @person.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@person.errors.count, "error") %>
+      prohibited this person from being saved:</h2>
+      <ul>
+      <% @person.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :birthday %>
+    <%= f.date_select :birthday %>
+  </div>
+  <div class="field">
+    <%= f.label :favorite_time %>
+    <%= f.time_select :favorite_time %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
+```
+If dont want to use f,
+```
+<%= text_area :person, :description %>
+instead of:
+<%= f.text_area :description %>
+```
+######Creating Radio Buttons
+tamplate
+```
+ <fieldset>
+    <legend>Country</legend>
+      <%= f.radio_button :country, 'USA' %> <%= f.label "person_country_usa",
+      "USA" %><br>
+      <%= f.radio_button :country, 'Canada' %> <%= f.label "person_country_canada",
+      "Canada" %><br>
+      <%= f.radio_button :country, 'Mexico' %> <%= f.label "person_country_mexico",
+      "Mexico" %><br>
+  </fieldset>
+```
+will render
+```
+  <fieldset>
+  <legend>Country</legend>
+  <input id="person_country_usa" name="person[country]" type="radio"
+value="USA" />
+  <label for="person_country_usa">USA</label><br>
+  <input id="person_country_canada" name="person[country]" type="radio"
+  value="Canada" />
+  <label for="person_country_canada">Canada</label><br>
+  <input id="person_country_mexico" name="person[country]" type="radio"
+  value="Mexico" />
+  <label for="person_country_mexico">Mexico</label><br>
+</fieldset>
+```
+or not assign by hand, sort list
+```
+  <% nations = {'Canada' => 'Canada', United Kingdom' => 'UK' }%>
+
+<fieldset>
+  <legend>Country</legend>
+  <% list = nations.sort
+  list.each do |x| %>
+    <%= f.radio_button :country, x[1] %>
+    <label for="<%= ("person_country_" + x[1].downcase) %>">
+    <%= x[0] %></label><br>
+  <% end %>
+</fieldset>
+```
+######Creating Selection Lists
+syntax: actualshow, value
+```
+<%= f.label :country %><br>
+<%= f.select :country, [ ['Canada', 'Canada'],
+                         ['United Kingdom', 'UK']]%>
+```
+will render
+```
+<p>
+  <label for="person_country">Country</label><br>
+  <select name="person[country]" id="person_country">
+  <option value="Canada">Canada</option>
+  <option value="UK">United Kingdom</option>
+</p>
+```
+assign a selected value
+```
+<%= f.select :country, [ ['Canada', 'Canada'],
+                         ['United Kingdom', 'UK']], :selected=>'UK'%>
+```
+set sort lists from hash
+```
+<% nations = {  'Canada' => 'Canada','United Kingdom' => 'UK' }%>
+<p>
+  <%= f.label :country %><br>
+  <% list = nations.sort %>
+  <%= f.select :country, list %>
+</p>
+```
