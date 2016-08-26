@@ -124,3 +124,24 @@ in hello.index.erb
 ```
 root to: "hello#index"
 ```
+#####Chapter 4. Managing Data Flow: Controllers and Models
+######Getting Started, Greeting Guests
+```
+rails new guestbook
+cd guestbook
+rails generate controller entries sign_in
+```
+app/controllers/entries_controller.rb
+```
+class EntriesController < ApplicationController
+  def sign_in
+  end
+end
+```
+app/views/entries/sign_in.html.erb
+```
+<%= form_tag action: 'sign_in' do %>
+   <%= text_field_tag 'visitor_name', @name %></p>
+   <%= submit_tag 'Sign in' %>
+<% end %>
+```
