@@ -423,3 +423,85 @@ set sort lists from hash
   <%= f.select :country, list %>
 </p>
 ```
+######Creating Helper Methods
+```
+<% nations = {'Canada' => 'Canada', 'United Kingdom' => 'UK' }%>
+<%= buttons(:person, :country, nations) %>
+```
+create buttons method in people_helper.rb
+```
+  module PeopleHelper
+
+    def buttons(model_name, target_property,button_source)
+         html=''
+         list = button_source.sort
+         html << '<fieldset><legend>Country</legend>'
+         list.each do |x|
+           html << radio_button(model_name, target_property, x[1])
+           html << (x[0])
+          html << '<br>'
+        end
+        html << '</fieldset>'
+        return html.html_safe
+   end
+  end
+```
+#####Chapter 7. Strengthening Models with Validation
+######The Power of Declarative Validation
+A error template
+```
+<% if person.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(person.errors.count, "error") %> prohibited this person
+      from being saved:</h2>
+
+      <ul>
+      <% person.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+```
+######Customizing the Message
+[validata_prasence_of for enum](http://stackoverflow.com/questions/33513315/validates-presence-of-fails-with-enum)
+```
+validates_presence_of :secret,
+    message: "must provide secret"
+    
+# password length 6-12
+  validates_length_of :secret, in: 6..12
+
+# at least one number
+  validates_format_of :secret, with: /[0-9]/,
+    message: "must contain at least one number"
+```
+######Limiting Choices
+```
+validates_inclusion_of :country, in: ['Canada','UK'],
+    message: "must be one of Canada, UK"
+```
+(tbc)
+
+
+
+
+#####Chapter 13. Sessions and Cookies
+######Getting Into and Out of Cookies
+simple cookie
+```
+cookies[:name] = @name
+```
+set cookie to path
+```
+cookies[:name] = { value: @name, path: '/entry' }
+```
+all atrributes
+```
+:value
+:domain
+:path
+:expires
+:secure
+:http_only
+```
